@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<script src="d3.js"></script>
+</head>
+<body>
+	<div class="chart">
+		
+	</div>
+	<section>asca</section>
+	<section>1</section>
+	<section>2</section>
+	<section>3</section>
+	<svg class="bar-chart-svg"></svg>
+	<!-- D3 的全称是（Data-Driven Documents） -->
+	<script>
+		//选中body元素添加helloworld   select 选择器
+		// var body = d3.select("body");
+		// var div = body.append("div");
+		// div.html("Hello, world!");
+
+		//选中所有的section selectAll 选择器（数组）  
+		//append会改变指向地址，(为了方便吧！链式操作)
+		// var section = d3.selectAll("section");
+		// var div = section.append("div");  
+		// div.html("Hello, world!");
+		// console.log(div);
+
+		//链式操作
+		// d3.select("section").style("color","red").style("background-color","blue")
+
+		// d3.selectAll("section")
+		//   .attr("class", "special")
+		//   .append("div")
+		//   .html("Hello, world!");
+
+
+		//svg  元素
+		// var v=d3.select("#dv").append("svg");
+		// v.attr("width",900).attr("height",400).style("border","1px solid blue");
+
+		//选中未存在的元素(???)
+		// d3.select("#dv")
+  // 		  .selectAll("div")
+  // 		  .html("你好");
+
+  		// 根据数组动态创建指定个元素并且操作
+  		// 绑定数据data
+  // 		var data = [4, 8, 15, 16, 23, 42, 12];
+		// d3.select(".chart")
+		//   .selectAll("div")
+		//   .data(data)
+		//   .enter().append("div")
+		//   .style("width", function(d) { return d * 10 + "px"; })
+		//   .text(function(d) { return d; });	
+
+
+		// 新库中不使用d3.scale.linear()啦，而是用 d3.scaleLinear() 来代替。把所有的d3.scale.linear()换成d3.scaleLinear()就可以出结果了。
+		// scale 是用于给定一个 domain （定义域），给定一个 range （值域） ，能够自动进行数值之间的转换。
+
+		// scaleLinear  线性函数，domain （定义域 x），给定一个 range （值域  y） ，能够自动进行数值之间的转换
+		// var data = [4, 8, 15, 16, 23, 42, 12];
+		// var x = d3.scaleLinear()
+		//     .domain([0, d3.max(data)])
+		//     .range([0, 420]);  //x 作用放大十倍
+		 // enter方法和append方法表示由于此时div元素还不存在，必须根据数据的个数将它们创造出来   
+		// d3.select(".chart")
+		//   .selectAll("div")
+		//   .data(data)
+		//   .enter().append("div")
+		//   .style("width", function(d) { 
+		//   	console.log(d);
+		//   	return x(d) + "px";
+		//   	 })
+		//   .text(function(d) { return d; });	
+
+
+
+		var dataArray = [4, 8, 15, 16, 23, 42, 12];
+		var width = 840,
+		    barHeight = 20;
+		// 定义线性函数 （放大20倍）
+		var x = d3.scaleLinear()
+		    .domain([0, d3.max(dataArray)])
+		    .range([0, width]);
+		// 设置元素的宽高
+		var chart = d3.select(".bar-chart-svg")
+		    .attr("width", width)
+		    .attr("height", barHeight * dataArray.length);
+		    // console.log(width)
+		    // console.log(barHeight * dataArray.length)
+		// 在svg中每个数据值生成一个g元素（group），    
+		var bar = chart.selectAll("g")
+		    .data(dataArray)
+		  	.enter().append("g")
+		    .attr("transform", function(d, i) { return "translate(0," + i * barHeight + ")"; });
+		// 在每个g元素内部生成一个rect元素和text元素。并设置属性    
+		bar.append("rect")
+		    .attr("width", x)
+		    .attr("height", barHeight - 1);
+		bar.append("text")
+		    .attr("x", function(d) { return x(d) - 3; })
+		    .attr("y", barHeight / 2)
+		    .attr("dy", ".35em")
+		    .text(function(d) { return d; });
+	</script>
+	
+</body>
+</html>

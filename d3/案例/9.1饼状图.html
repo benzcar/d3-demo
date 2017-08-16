@@ -1,0 +1,64 @@
+<html>  
+  <head>  
+        <meta charset="utf-8">  
+        <title>饼状图</title>  
+  </head> 
+
+<style>
+
+
+</style>
+    <body>  
+		<script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>  
+        <script>
+		
+		var width = 400;
+		var height = 400;
+		var dataset = [ 30 , 10 , 43 , 55 , 13 ];
+		
+		var svg = d3.select("body")
+					.append("svg")
+					.attr("width", width)
+					.attr("height", height);
+		
+		var pie = d3.layout.pie();  //定义一个布局（这里是饼性布局），相当于调用一个转化为饼性数据的函数
+		var piedata = pie(dataset); //用饼性布局转化数据为相应的对象格式
+		//调用弧生成器
+		var outerRadius = 150;	//外半径
+		var innerRadius = 0;	//内半径，为0则中间没有空白
+		var arc = d3.svg.arc()	//弧生成器
+					.innerRadius(innerRadius)	//设置内半径
+					.outerRadius(outerRadius);	//设置外半径
+		
+		var color = d3.scale.category10();   ////调用有十种颜色的颜色比例尺
+		//给svg添加g元素
+		var arcs = svg.selectAll("g")  
+					  .data(piedata)
+					  .enter()
+					  .append("g")
+					  .attr("transform","translate("+ (width/2) +","+ (width/2) +")");
+		//每个 g 元素，添加 path ，生成饼图			  
+		arcs.append("path")              
+			.attr("fill",function(d,i){
+				return color(i);
+			})
+			.attr("d",function(d){
+				return arc(d);       //调用弧生成器，得到路径值  d为上面的piedata对的子元素（依次运行）
+			});
+		//添加text文本值，设置位置
+		arcs.append("text")			
+			.attr("transform",function(d){
+				return "translate(" + arc.centroid(d) + ")";  //arc.centroid(d) 能算出弧线的中心
+			})
+			.attr("text-anchor","middle")
+			.text(function(d){
+				return d.data;
+			});
+		
+		console.log(dataset);
+		console.log(piedata);
+		  
+        </script>  
+		
+    </body>  
+</html>  

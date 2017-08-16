@@ -1,0 +1,139 @@
+<html>  
+  <head>  
+        <meta charset="utf-8">  
+        <title>树状图</title>  
+<style>
+
+.node circle {
+  fill: #fff;
+  stroke: steelblue;
+  stroke-width: 1.5px;
+}
+
+.node {
+  font: 12px sans-serif;
+}
+
+.link {
+  fill: none;
+  stroke: #ccc;
+  stroke-width: 1.5px;
+}
+
+</style>
+  </head> 
+<body>
+<script src="http://d3js.org/d3.v3.min.js"></script>
+<script>
+var trees={
+"name":"中国",
+"children":
+[
+	{ 
+	  "name":"浙江" , 
+  	  "children":
+  	  [
+	  	  	{"name":"杭州" },
+	  	  	{"name":"宁波" },
+	  	  	{"name":"温州" },
+	  	  	{"name":"绍兴" }
+  	  ] 
+  	},
+  	
+	{ 
+		"name":"广西" , 
+		"children":
+		[
+			{
+			"name":"桂林",
+			"children":
+			[
+				{"name":"秀峰区"},
+				{"name":"叠彩区"},
+				{"name":"象山区"},
+				{"name":"七星区"}
+			]
+			},
+			{"name":"南宁"},
+			{"name":"柳州"},
+			{"name":"防城港"}
+		] 
+	},
+	
+	{ 
+		"name":"黑龙江",
+		"children":
+		[
+			{"name":"哈尔滨"},
+			{"name":"齐齐哈尔"},
+			{"name":"牡丹江"},
+			{"name":"大庆"}
+		] 
+	},
+	
+	{ 
+		"name":"新疆" , 
+		"children":
+		[
+			{"name":"乌鲁木齐"},
+			{"name":"克拉玛依"},
+			{"name":"吐鲁番"},
+			{"name":"哈密"}
+		]
+	}
+]
+};
+
+//定义一个集群图布局：
+//size()：设定尺寸，即转换后的各节点的坐标在哪一个范围内。
+//separation()：设定节点之间的间隔。
+var width = 500,
+height = 500;
+var tree = d3.layout.tree()
+	.size([width, height-200])
+	.separation(function(a, b) { return (a.parent == b.parent ? 1 : 2); });
+//创建一个对角线生成器：
+//projection() 是一个点变换器，默认是 [ d.x , d.y ]，即保持原坐标不变，如果写成 [ d.y , d.x ] ，即是说对任意输入的顶点，都交换 x 和 y 坐标。
+var diagonal = d3.svg.diagonal()
+	.projection(function(d) { return [d.y, d.x]; });
+//添加svg标签，添加g标签
+var svg = d3.select("body").append("svg")
+	.attr("width", width)
+	.attr("height", height)
+	.append("g")
+	.attr("transform", "translate(40,0)");
+
+	//获取数据
+	var nodes = tree.nodes(trees);
+	var links = tree.links(nodes);
+	
+	console.log(nodes);
+	console.log(links);
+	//绘制连线
+	var link = svg.selectAll(".link")
+	  .data(links)
+	  .enter()
+	  .append("path")
+	  .attr("class", "link")
+	  .attr("d", diagonal);  //使用对角线生成器
+	//绘制节点，添加属性
+	var node = svg.selectAll(".node")
+	  .data(nodes)
+	  .enter()
+	  .append("g")
+	  .attr("class", "node")
+	  .attr("transform", function(d) { return "translate(" + d.y + "," + d.x + ")"; })
+	node.append("circle")
+	  .attr("r", 4.5);
+	//节点添加文字
+	node.append("text")
+	  .attr("dx", function(d) { return d.children ? -8 : 8; })
+	  .attr("dy", 3)
+	  .style("text-anchor", function(d) { return d.children ? "end" : "start"; })
+	  .text(function(d) { return d.name; });
+
+
+</script>
+		
+    </body>  
+</html>  
